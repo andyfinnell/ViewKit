@@ -15,17 +15,17 @@ final class ActionTargetTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        subject = ActionTarget(primaryAction: .primaryAction)
+        subject = ActionTarget(primaryAction: .primaryActionTriggered)
     }
     
     func testAddTarget() {
         let target1 = FakeTarget()
         
-        subject.addTarget(target1, action: #selector(FakeTarget.onAction(_:)), for: .primaryAction)
+        subject.addTarget(target1, action: #selector(FakeTarget.onAction(_:)), for: .primaryActionTriggered)
         
         XCTAssertFalse(target1.wasCalled)
         
-        subject.sendActions(for: .primaryAction)
+        subject.sendActions(for: .primaryActionTriggered)
         
         XCTAssertTrue(target1.wasCalled)
     }
@@ -33,10 +33,10 @@ final class ActionTargetTests: XCTestCase {
     func testRemoveTargetByExactMatch() {
         let target1 = FakeTarget()
         
-        subject.addTarget(target1, action: #selector(FakeTarget.onAction(_:)), for: .primaryAction)
-        subject.removeTarget(target1, action: #selector(FakeTarget.onAction(_:)), for: .primaryAction)
+        subject.addTarget(target1, action: #selector(FakeTarget.onAction(_:)), for: .primaryActionTriggered)
+        subject.removeTarget(target1, action: #selector(FakeTarget.onAction(_:)), for: .primaryActionTriggered)
         
-        subject.sendActions(for: .primaryAction)
+        subject.sendActions(for: .primaryActionTriggered)
         
         XCTAssertFalse(target1.wasCalled)
     }
@@ -44,10 +44,10 @@ final class ActionTargetTests: XCTestCase {
     func testRemoveTargetByEventOnly() {
         let target1 = FakeTarget()
         
-        subject.addTarget(target1, action: #selector(FakeTarget.onAction(_:)), for: .primaryAction)
-        subject.removeTarget(nil, action: nil, for: .primaryAction)
+        subject.addTarget(target1, action: #selector(FakeTarget.onAction(_:)), for: .primaryActionTriggered)
+        subject.removeTarget(nil, action: nil, for: .primaryActionTriggered)
         
-        subject.sendActions(for: .primaryAction)
+        subject.sendActions(for: .primaryActionTriggered)
         
         XCTAssertFalse(target1.wasCalled)
     }
@@ -56,11 +56,11 @@ final class ActionTargetTests: XCTestCase {
         let target1 = FakeTarget()
         let target2 = FakeTarget()
 
-        subject.addTarget(target1, action: #selector(FakeTarget.onAction(_:)), for: .primaryAction)
-        subject.addTarget(target2, action: #selector(FakeTarget.onAction(_:)), for: .primaryAction)
+        subject.addTarget(target1, action: #selector(FakeTarget.onAction(_:)), for: .primaryActionTriggered)
+        subject.addTarget(target2, action: #selector(FakeTarget.onAction(_:)), for: .primaryActionTriggered)
 
         
-        subject.sendActions(for: .primaryAction)
+        subject.sendActions(for: .primaryActionTriggered)
         
         XCTAssertTrue(target1.wasCalled)
         XCTAssertTrue(target2.wasCalled)

@@ -17,7 +17,7 @@ public struct TargetableEvent: OptionSet {
         self.rawValue = rawValue
     }
     
-    public static let primaryAction = TargetableEvent(rawValue: 1 << 0)
+    public static let primaryActionTriggered = TargetableEvent(rawValue: 1 << 0)
 }
 
 

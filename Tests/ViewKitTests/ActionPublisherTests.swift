@@ -5,8 +5,8 @@ import ViewKit
 
 final class ActionPublisherTests: XCTestCase {
     func testSubscribe() {
-        let target = ActionTarget(primaryAction: .primaryAction)
-        let subject = ActionPublisher(target: target, targetEvent: .primaryAction)
+        let target = ActionTarget(primaryAction: .primaryActionTriggered)
+        let subject = ActionPublisher(target: target, targetEvent: .primaryActionTriggered)
         var cancellables = Set<AnyCancellable>()
         let finishExpectation = expectation(description: "finish")
         var isComplete = false

@@ -4,7 +4,7 @@ import XCTest
 import ViewKit
 
 private final class FakePropertyTarget: Targetable {
-    private let actionTarget = ActionTarget(primaryAction: .primaryAction)
+    private let actionTarget = ActionTarget(primaryAction: .primaryActionTriggered)
     
     var value = 42
     
@@ -28,7 +28,7 @@ private final class FakePropertyTarget: Targetable {
 final class ActionPropertyPublisherTests: XCTestCase {
     func testSubscribe() {
         let target = FakePropertyTarget()
-        let subject = ActionPropertyPublisher(target: target, targetEvent: .primaryAction, keyPath: \.value)
+        let subject = ActionPropertyPublisher(target: target, targetEvent: .primaryActionTriggered, keyPath: \.value)
         var cancellables = Set<AnyCancellable>()
         let finishExpectation = expectation(description: "finish")
         var isComplete = false
