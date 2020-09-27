@@ -18,6 +18,6 @@ jobs:
     - name: Run macOS tests
       run: swift test -v
     - name: Run iOS tests
-      run: xcodebuild test -scheme ViewKit -destination platform="iOS Simulator,name=iPhone 11 Pro"
+      run: xcodebuild test -scheme ViewKit -destination platform="iOS Simulator,name=iPhone 11 Pro,OS=14.0"
     - name: Run tvOS tests
-      run: xcodebuild test -scheme ViewKit -destination platform="tvOS Simulator,name=Apple TV 4K"            
+      run: xcodebuild test -scheme ViewKit -destination platform="tvOS Simulator,name=Apple TV 4K,OS=14.0"            
