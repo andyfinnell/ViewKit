@@ -3,7 +3,7 @@ import Foundation
 #if canImport(AppKit)
 import AppKit
 
-public class StandardView: NSView {
+open class StandardView: NSView {
     public init() {
         super.init(frame: .zero)
         hierarchy.install(on: self)
@@ -13,7 +13,7 @@ public class StandardView: NSView {
     }
     
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
