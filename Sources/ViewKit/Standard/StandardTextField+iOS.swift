@@ -1,7 +1,8 @@
 #if canImport(UIKit)
 import UIKit
+import Combine
 
-public final class StandardTextField: UITextField, Stylable {
+public final class StandardTextField: UITextField, Stylable, Targetable {
     public struct Style {
         public let borderColor: UIColor
         public let focusBorderColor: UIColor
@@ -56,6 +57,13 @@ public final class StandardTextField: UITextField, Stylable {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+public extension PublisherContainer where TargetableType: StandardTextField {
+    var text: AnyPublisher<String?, Never> {
+        ActionPropertyPublisher(target: targetable, targetEvent: .valueChanged, keyPath: \.text)
+            .eraseToAnyPublisher()
     }
 }
 #endif

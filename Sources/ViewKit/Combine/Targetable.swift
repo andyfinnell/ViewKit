@@ -18,6 +18,7 @@ public struct TargetableEvent: OptionSet {
     }
     
     public static let primaryActionTriggered = TargetableEvent(rawValue: 1 << 0)
+    public static let valueChanged = TargetableEvent(rawValue: 1 << 1)
 }
 
 

@@ -1,8 +1,11 @@
 import Foundation
 #if canImport(AppKit)
 import AppKit
+import Combine
 
 public final class StandardTextField: NSTextField {
+    private let actionTarget = ActionTarget(primaryAction: .valueChanged)
+
     public enum Format {
         case standard
         case email
@@ -13,6 +16,8 @@ public final class StandardTextField: NSTextField {
         self.translatesAutoresizingMaskIntoConstraints = false
         self.placeholder = placeholder
         setAccessibilityIdentifier(id)
+        target = actionTarget
+        action = #selector(ActionTarget.sendPrimaryAction)
     }
     
     @available(*, unavailable)
@@ -28,6 +33,27 @@ public final class StandardTextField: NSTextField {
     public var placeholder: String? {
         get { placeholderString }
         set { placeholderString = newValue }
+    }
+    
+    public override func textDidChange(_ notification: Notification) {
+        actionTarget.sendActions(for: .valueChanged)
+    }
+}
+
+extension StandardTextField: Targetable {
+    public func addTarget(_ target: Any?, action: Selector, for event: TargetableEvent) {
+        actionTarget.addTarget(target, action: action, for: event)
+    }
+    
+    public func removeTarget(_ target: Any?, action: Selector?, for event: TargetableEvent) {
+        actionTarget.removeTarget(target, action: action, for: event)
+    }
+}
+
+public extension PublisherContainer where TargetableType: StandardTextField {
+    var text: AnyPublisher<String?, Never> {
+        ActionPropertyPublisher(target: targetable, targetEvent: .valueChanged, keyPath: \.text)
+            .eraseToAnyPublisher()
     }
 }
 
