@@ -17,11 +17,11 @@ open class StandardView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public var hierarchy: ViewHierarchy {
+    open var hierarchy: ViewHierarchy {
         return .views([])
     }
 
-    public var layout: [Layout] {
+    open var layout: [Layout] {
         return []
     }
 }

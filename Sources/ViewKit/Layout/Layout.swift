@@ -132,9 +132,16 @@ enum VerticalSide {
     case top, bottom
 }
 
+enum SpacingConstraint {
+    case equal(Float)
+    case lessThan(Float)
+    case greaterThan(Float)
+}
+
 public enum ColumnLayout {
     case topGuide
     case space(Float)
+    case spaceOfAtLeast(Float)
     case view(NativeView)
     case bottomGuide
     
@@ -143,6 +150,8 @@ public enum ColumnLayout {
         case .topGuide:
             return .topGuide
         case .space(_):
+            return nil
+        case .spaceOfAtLeast:
             return nil
         case let .view(view):
             switch side {
@@ -154,9 +163,10 @@ public enum ColumnLayout {
         }
     }
     
-    var spacing: Float? {
+    var spacing: SpacingConstraint? {
         switch self {
-        case let .space(value): return value
+        case let .space(value): return .equal(value)
+        case let .spaceOfAtLeast(value): return .greaterThan(value)
         default: return nil
         }
     }
@@ -169,6 +179,7 @@ enum HorizontalSide {
 public enum RowLayout {
     case leadingGuide
     case space(Float)
+    case spaceOfAtLeast(Float)
     case view(NativeView)
     case trailingGuide
     
@@ -176,7 +187,7 @@ public enum RowLayout {
         switch self {
         case .leadingGuide:
             return .leadingGuide
-        case .space(_):
+        case .space, .spaceOfAtLeast:
             return nil
         case let .view(view):
             switch side {
@@ -188,9 +199,10 @@ public enum RowLayout {
         }
     }
 
-    var spacing: Float? {
+    var spacing: SpacingConstraint? {
         switch self {
-        case let .space(value): return value
+        case let .space(value): return .equal(value)
+        case let .spaceOfAtLeast(value): return .greaterThan(value)
         default: return nil
         }
     }
@@ -315,7 +327,7 @@ public enum Layout {
     
     private func lower(rows: [RowLayout]) -> [CoreLayout] {
         var previousAnchor: RowLayout?
-        var spacing = Float(0.0)
+        var spacing = SpacingConstraint.equal(0.0)
         var constraints = [CoreLayout]()
         
         for row in rows {
@@ -327,9 +339,18 @@ public enum Layout {
             }
             
             if let trailingAnchor = previousAnchor?.anchor(for: .trailing) {
-                constraints.append(.halign(trailingAnchor, leadingAnchor, LayoutAssemblyRelation(constant: spacing)))
+                let relation: LayoutAssemblyRelation
+                switch spacing {
+                case let .equal(value):
+                    relation = LayoutAssemblyRelation(op: .equal, constant: value)
+                case let .greaterThan(value):
+                    relation = LayoutAssemblyRelation(op: .greaterThanEqual, constant: value)
+                case let .lessThan(value):
+                    relation = LayoutAssemblyRelation(op: .lessThanEqual, constant: value)
+                }
+                constraints.append(.halign(trailingAnchor, leadingAnchor, relation))
                 previousAnchor = row
-                spacing = 0.0
+                spacing = .equal(0.0)
             } else {
                 previousAnchor = row
             }
@@ -340,7 +361,7 @@ public enum Layout {
     
     private func lower(columns: [ColumnLayout]) -> [CoreLayout] {
         var previousAnchor: ColumnLayout?
-        var spacing = Float(0.0)
+        var spacing = SpacingConstraint.equal(0.0)
         var constraints = [CoreLayout]()
         
         for column in columns {
@@ -352,9 +373,18 @@ public enum Layout {
             }
             
             if let bottomAnchor = previousAnchor?.anchor(for: .bottom) {
-                constraints.append(.valign(bottomAnchor, topAnchor, LayoutAssemblyRelation(constant: spacing)))
+                let relation: LayoutAssemblyRelation
+                switch spacing {
+                case let .equal(value):
+                    relation = LayoutAssemblyRelation(op: .equal, constant: value)
+                case let .greaterThan(value):
+                    relation = LayoutAssemblyRelation(op: .greaterThanEqual, constant: value)
+                case let .lessThan(value):
+                    relation = LayoutAssemblyRelation(op: .lessThanEqual, constant: value)
+                }
+                constraints.append(.valign(bottomAnchor, topAnchor, relation))
                 previousAnchor = column
-                spacing = 0.0
+                spacing = .equal(0.0)
             } else {
                 previousAnchor = column
             }
