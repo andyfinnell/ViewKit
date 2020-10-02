@@ -142,7 +142,7 @@ public enum ColumnLayout {
     case topGuide
     case space(Float)
     case spaceOfAtLeast(Float)
-    case view(NativeView)
+    case view(leading: Float? = nil, NativeView, trailing: Float? = nil)
     case bottomGuide
     
     func anchor(for side: VerticalSide) -> VerticalAnchor? {
@@ -153,7 +153,7 @@ public enum ColumnLayout {
             return nil
         case .spaceOfAtLeast:
             return nil
-        case let .view(view):
+        case let .view(_, view, _):
             switch side {
             case .top: return .top(view)
             case .bottom: return .bottom(view)
@@ -163,11 +163,27 @@ public enum ColumnLayout {
         }
     }
     
-    var spacing: SpacingConstraint? {
+    fileprivate var spacing: SpacingConstraint? {
         switch self {
         case let .space(value): return .equal(value)
         case let .spaceOfAtLeast(value): return .greaterThan(value)
         default: return nil
+        }
+    }
+    
+    fileprivate var horizontalConstraints: [CoreLayout] {
+        switch self {
+        case .topGuide, .space, .spaceOfAtLeast, .bottomGuide:
+            return []
+        case let .view(leading: leading, view, trailing: trailing):
+            var constraints = [CoreLayout]()
+            if let leading = leading {
+                constraints.append(.halign(.leadingGuide, .leading(view), LayoutAssemblyRelation(constant: leading)))
+            }
+            if let trailing = trailing {
+                constraints.append(.halign(.trailing(view), .trailingGuide, LayoutAssemblyRelation(constant: trailing)))
+            }
+            return constraints
         }
     }
 }
@@ -371,6 +387,8 @@ public enum Layout {
                 }
                 continue
             }
+            
+            constraints.append(contentsOf: column.horizontalConstraints)
             
             if let bottomAnchor = previousAnchor?.anchor(for: .bottom) {
                 let relation: LayoutAssemblyRelation
