@@ -4,9 +4,9 @@ public enum HorizontalAnchor {
     case leadingGuide
     case trailingGuide
     case centerGuide
-    case leading(NativeView)
-    case trailing(NativeView)
-    case center(NativeView)
+    case leading(NativeViewable)
+    case trailing(NativeViewable)
+    case center(NativeViewable)
     
     fileprivate func lower(other: HorizontalAnchor) -> LayoutAssemblyHAnchor {
         switch self {
@@ -26,11 +26,11 @@ public enum HorizontalAnchor {
             }
             return LayoutAssemblyHAnchor(item: s, attribute: .hcenter)
         case let .leading(view):
-            return LayoutAssemblyHAnchor(item: view, attribute: .leading)
+            return LayoutAssemblyHAnchor(item: view.asView, attribute: .leading)
         case let .trailing(view):
-            return LayoutAssemblyHAnchor(item: view, attribute: .trailing)
+            return LayoutAssemblyHAnchor(item: view.asView, attribute: .trailing)
         case let .center(view):
-            return LayoutAssemblyHAnchor(item: view, attribute: .hcenter)
+            return LayoutAssemblyHAnchor(item: view.asView, attribute: .hcenter)
         }
     }
     
@@ -39,9 +39,9 @@ public enum HorizontalAnchor {
         case .leadingGuide: return nil
         case .trailingGuide: return nil
         case .centerGuide: return nil
-        case let .leading(view): return view
-        case let .trailing(view): return view
-        case let .center(view): return view
+        case let .leading(view): return view.asView
+        case let .trailing(view): return view.asView
+        case let .center(view): return view.asView
         }
     }
 }
@@ -50,10 +50,10 @@ public enum VerticalAnchor {
     case topGuide
     case bottomGuide
     case centerGuide
-    case top(NativeView)
-    case bottom(NativeView)
-    case baseline(NativeView)
-    case center(NativeView)
+    case top(NativeViewable)
+    case bottom(NativeViewable)
+    case baseline(NativeViewable)
+    case center(NativeViewable)
     
     fileprivate func lower(other: VerticalAnchor) -> LayoutAssemblyVAnchor {
         switch self {
@@ -73,13 +73,13 @@ public enum VerticalAnchor {
             }
             return LayoutAssemblyVAnchor(item: s, attribute: .vcenter)
         case let .top(view):
-            return LayoutAssemblyVAnchor(item: view, attribute: .top)
+            return LayoutAssemblyVAnchor(item: view.asView, attribute: .top)
         case let .bottom(view):
-            return LayoutAssemblyVAnchor(item: view, attribute: .bottom)
+            return LayoutAssemblyVAnchor(item: view.asView, attribute: .bottom)
         case let .baseline(view):
-            return LayoutAssemblyVAnchor(item: view, attribute: .baseline)
+            return LayoutAssemblyVAnchor(item: view.asView, attribute: .baseline)
         case let .center(view):
-            return LayoutAssemblyVAnchor(item: view, attribute: .vcenter)
+            return LayoutAssemblyVAnchor(item: view.asView, attribute: .vcenter)
         }
     }
     
@@ -88,25 +88,25 @@ public enum VerticalAnchor {
         case .topGuide: return nil
         case .bottomGuide: return nil
         case .centerGuide: return nil
-        case let .top(view): return view
-        case let .bottom(view): return view
-        case let .baseline(view): return view
-        case let .center(view): return view
+        case let .top(view): return view.asView
+        case let .bottom(view): return view.asView
+        case let .baseline(view): return view.asView
+        case let .center(view): return view.asView
         }
     }
 }
 
 public enum SizeAnchor {
-    case width(NativeView)
-    case height(NativeView)
+    case width(NativeViewable)
+    case height(NativeViewable)
     case constant(Float)
     
     fileprivate func lower() -> LayoutAssemblyDimensionAnchor? {
         switch self {
         case let .width(view):
-            return LayoutAssemblyDimensionAnchor(item: view, attribute: .width)
+            return LayoutAssemblyDimensionAnchor(item: view.asView, attribute: .width)
         case let .height(view):
-            return LayoutAssemblyDimensionAnchor(item: view, attribute: .height)
+            return LayoutAssemblyDimensionAnchor(item: view.asView, attribute: .height)
         case .constant(_): return nil
         }
     }
@@ -142,7 +142,7 @@ public enum ColumnLayout {
     case topGuide
     case space(Float)
     case spaceOfAtLeast(Float)
-    case view(leading: Float? = nil, NativeView, trailing: Float? = nil)
+    case view(leading: Float? = nil, NativeViewable, trailing: Float? = nil)
     case bottomGuide
     
     func anchor(for side: VerticalSide) -> VerticalAnchor? {
@@ -196,7 +196,7 @@ public enum RowLayout {
     case leadingGuide
     case space(Float)
     case spaceOfAtLeast(Float)
-    case view(NativeView)
+    case view(NativeViewable)
     case trailingGuide
     
     func anchor(for side: HorizontalSide) -> HorizontalAnchor? {
@@ -252,26 +252,26 @@ public enum Layout {
     case valign(VerticalAnchor, Float, VerticalAnchor)
     case size(SizeAnchor, SizeAnchor)
 
-    case leading(Float, NativeView)
-    case trailing(NativeView, Float)
-    case hmargin(Float, NativeView, Float)
-    case hmarginAtLeast(Float, NativeView, Float)
-    case hmarginTrailingAtLeast(Float, NativeView, Float)
-    case width(NativeView, SizeAnchor)
-    case maximumWidth(NativeView, SizeAnchor)
-    case hcenter(NativeView)
-    case hcenterContainer(NativeView, minMargin: Float, maxWidth: Float)
+    case leading(Float, NativeViewable)
+    case trailing(NativeViewable, Float)
+    case hmargin(Float, NativeViewable, Float)
+    case hmarginAtLeast(Float, NativeViewable, Float)
+    case hmarginTrailingAtLeast(Float, NativeViewable, Float)
+    case width(NativeViewable, SizeAnchor)
+    case maximumWidth(NativeViewable, SizeAnchor)
+    case hcenter(NativeViewable)
+    case hcenterContainer(NativeViewable, minMargin: Float, maxWidth: Float)
     case row([RowLayout])
     
-    case top(Float, NativeView)
-    case bottom(NativeView, Float)
-    case vmargin(Float, NativeView, Float)
-    case vmarginAtLeast(Float, NativeView, Float)
-    case height(NativeView, SizeAnchor)
-    case vcenter(NativeView)
+    case top(Float, NativeViewable)
+    case bottom(NativeViewable, Float)
+    case vmargin(Float, NativeViewable, Float)
+    case vmarginAtLeast(Float, NativeViewable, Float)
+    case height(NativeViewable, SizeAnchor)
+    case vcenter(NativeViewable)
     case column([ColumnLayout])
     
-    case center(NativeView)
+    case center(NativeViewable)
     
     func compile() -> [LayoutAssembly] {
         return lower().flatMap { $0.compile() }
